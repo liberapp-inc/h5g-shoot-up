@@ -5,15 +5,17 @@ class EffectCircle extends GameObject{
 
     radius:number;
     color:number;
+    period:number;
+    frame:number;
+    scaler:number;
 
-    static readonly maxFrame:number = 30;
-    frame:number = EffectCircle.maxFrame;
-
-    constructor( x:number, y:number, radius:number, color:number=0xffc000 ) {
+    constructor( x:number, y:number, radius:number, color:number=0xffc000, frames:number=30, scaler:number=1.03 ) {
         super();
 
         this.radius = radius;
         this.color = color;
+        this.frame = this.period = frames;
+        this.scaler = scaler;
         this.setShape(x, y, this.radius);
     }
 
@@ -24,9 +26,10 @@ class EffectCircle extends GameObject{
         }else{
             this.shape.graphics.clear();
         }
+        const rate = (this.frame / this.period);  // 1.0~0.0
         this.shape.x = x;
         this.shape.y = y;
-        this.shape.graphics.lineStyle(3 + 10*(this.frame/EffectCircle.maxFrame), this.color);
+        this.shape.graphics.lineStyle(3 + 10 * rate, this.color);
         this.shape.graphics.drawCircle(0, 0, radius);
     }
 
@@ -36,7 +39,7 @@ class EffectCircle extends GameObject{
             return;
         }
 
-        this.radius *= 1.03;
+        this.radius *= this.scaler;
         this.setShape( this.shape.x, this.shape.y, this.radius );
     }
 }
