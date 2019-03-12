@@ -10,20 +10,21 @@ class Player extends GameObject{
     speed:number;
 
     ammo:number = 0;
-    readonly shotLevelTable:number[] = [20, 50, 100];
+    readonly shotLevelTable:number[] = [10, 30, 100];
     shotLevel = 0;
-    readonly shotFrameTable:number[] = [15, 10, 6];
+    readonly shotFrameTable:number[] = [13, 9, 6];
     shotFrame:number = 0;
     touch:boolean = false;
     touchOffsetX:number = 0;
     stopFlag:boolean = false;
+    state:()=>void = this.stateRun;
 
     constructor() {
         super();
 
         Player.I = this;
         this.radius = PLAYER_RADIUS_PER_WIDTH * Util.width;
-        this.speed = this.maxSpeed = Util.height / (3 * 60);
+        this.speed = this.maxSpeed = Util.height / (2.5 * 60);
         this.setShape(Util.width *0.5, Util.height * PLAYER_POSITION_PER_HEIGHT, this.radius);
         GameObject.display.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, (e: egret.TouchEvent) => this.touchBegin(e), this);
         GameObject.display.stage.addEventListener(egret.TouchEvent.TOUCH_MOVE, (e: egret.TouchEvent) => this.touchMove(e), this);
@@ -53,6 +54,18 @@ class Player extends GameObject{
     }
     
     update() {
+        this.state();
+    }
+
+    stateRun(){
+        // game over
+        if( this.shape.y > Util.height - this.radius ){
+            this.state = this.stateNone;
+            this.speed = 0;
+            new GameOver();
+            return;
+        }
+
         if( this.stopFlag ){
             this.stopFlag = false;
             this.speed = this.maxSpeed * 0.5;
@@ -67,11 +80,13 @@ class Player extends GameObject{
             if( (--this.shotFrame) <= 0 ){
                 this.shotFrame = this.shotFrameTable[ this.shotLevel ];
                 new PlayerShot( this.shape.x, this.shape.y - this.radius, 0 );
-                new PlayerShot( this.shape.x, this.shape.y - this.radius, Math.PI * (+1/16) );
-                new PlayerShot( this.shape.x, this.shape.y - this.radius, Math.PI * (-1/16) );
+                // new PlayerShot( this.shape.x, this.shape.y - this.radius, Math.PI * (+1/16) );
+                // new PlayerShot( this.shape.x, this.shape.y - this.radius, Math.PI * (-1/16) );
             }
         }
     }
+
+    stateNone(){}
 
     touchBegin(e:egret.TouchEvent){
         if( this.deleteFlag )
@@ -103,7 +118,13 @@ class Player extends GameObject{
         }
     }
 
-    eatDot(){
+    addAmmo(){
         this.ammo += 1;
+
+        for( let i=0 ; i<this.shotLevelTable.length ; i++ ){
+            this.shotLevel = i;
+            if( this.ammo < this.shotLevelTable[i] )
+                break;
+        }
     }
 }

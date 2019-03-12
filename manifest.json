@@ -9,11 +9,12 @@
 	],
 	"game": [
 		"bin-debug/GameObject.js",
-		"bin-debug/GameOver.js",
+		"bin-debug/ItemAmmo.js",
 		"bin-debug/EffectCircle.js",
 		"bin-debug/EffectLine.js",
 		"bin-debug/Game.js",
 		"bin-debug/Background.js",
+		"bin-debug/GameOver.js",
 		"bin-debug/Block.js",
 		"bin-debug/Main.js",
 		"bin-debug/Player.js",
