@@ -4,6 +4,7 @@
 class ItemAmmo extends GameObject{
 
     radius:number;
+    speed:number = 1.0;
 
     constructor( x:number, y:number ) {
         super();
@@ -28,19 +29,48 @@ class ItemAmmo extends GameObject{
     }
 
     update() {
-        this.shape.y += Player.I.speed * 1.2;
+        // fall down
+        this.shape.y += Player.I.speed * this.speed;
+        this.speed += 0.03;
 
         // プレイヤーとの接触
-        let dx = Player.I.shape.x - this.shape.x;
-        let dy = Player.I.shape.y - this.shape.y;
-        if( dx**2 + dy**2 <= (Player.I.radius + this.radius)**2 ){
+        if( this.isPicked() ){
             Player.I.addAmmo();
-            this.destroy();
             return;
         }
 
         // 画面外で消滅
-        if( this.shape.y >= Util.height + this.radius )
+        this.isOutOfScreen();
+    }
+
+    // プレイヤーとの接触
+    isPicked():boolean{
+        let dx = Player.I.shape.x - this.shape.x;
+        let dy = Player.I.shape.y - this.shape.y;
+        let l = dx**2 + dy**2;
+        if( l <= (Player.I.radius + this.radius)**2 ){
             this.destroy();
+            return true;
+        }
+        // マグネット引き寄せ
+        if( Player.I.power == Power.Magnet ){
+            l = Math.sqrt( l );
+            let rate = 1 - Util.clamp( l / (Util.width * 0.5), 0, 1 );
+            this.speed += (1.0 - this.speed) * rate;
+            l = 1 / l * rate * Util.width * 0.05;
+            this.shape.x += dx * l;
+            this.shape.y += dy * l;
+        }
+        return false;
+    }
+
+    // 画面外で消滅
+    isOutOfScreen():boolean{
+        if( this.shape.y >= Util.height + this.radius ){
+            this.destroy();
+            return true;
+        }
+        return false;
     }
 }
+

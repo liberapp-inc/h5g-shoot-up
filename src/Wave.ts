@@ -20,7 +20,7 @@ class Wave extends GameObject{
     }
 
     calcBlockHp():number {
-        const maxHp = Math.min( this.wave/8+1, Block.maxHp );
+        const maxHp = Math.min( this.wave/16+1, Block.maxHp );
         return Util.clamp( Util.randomInt( maxHp*0.25, maxHp ), 1, maxHp );
     }
 

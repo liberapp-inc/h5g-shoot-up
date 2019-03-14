@@ -10,6 +10,8 @@ const BLOCK_SIZE_PER_WIDTH = 1/BLOCK_IN_WIDTH;
 const BLOCK_SIZE_PER_HEIGHT = 1/BLOCK_IN_HEIGHT;
 const SCROLL_SPEED_PER_HEIGHT = (1/60/3);
 
+const SAVE_KEY_BESTSCORE = "ShootUp-bestScore";
+
 class Game {
 
     static loadSceneGamePlay() {

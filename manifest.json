@@ -16,6 +16,7 @@
 		"bin-debug/Background.js",
 		"bin-debug/GameOver.js",
 		"bin-debug/Block.js",
+		"bin-debug/ItemPower.js",
 		"bin-debug/Main.js",
 		"bin-debug/Player.js",
 		"bin-debug/PlayerShot.js",

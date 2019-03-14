@@ -4,7 +4,7 @@
 class Block extends GameObject{
 
     static blocks:Block[] = [];
-    static readonly maxHp:number = 20;
+    static readonly maxHp:number = 10;
     hp:number;
     sizeW:number;
     sizeH:number;
@@ -41,12 +41,12 @@ class Block extends GameObject{
         this.shape.x = x;
         this.shape.y = y;
         this.shape.graphics.beginFill(Block.getColor(this.hp));
-        this.shape.graphics.drawRect(-0.5*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH);
+        this.shape.graphics.drawRoundRect(-0.5*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH, this.sizeW*0.2);
         this.shape.graphics.endFill();
     }
     static getColor( hp:number ): number {
         let rate = Util.clamp( (hp-1) / (Block.maxHp-1), 0, 1);
-        return Util.colorLerp( 0xffc000, 0xff8000, rate );
+        return Util.colorLerp( 0x2060ff, 0x00d0ff, rate );
     }
 
     update() {
@@ -104,7 +104,11 @@ class Block extends GameObject{
             this.setShape( this.shape.x, this.shape.y );
         }else{
             Score.I.breakBlock();
-            new ItemAmmo( this.shape.x, this.shape.y );
+            if( ItemPower.I != null || Util.randomInt(0,9)!=0 ){
+                new ItemAmmo( this.shape.x, this.shape.y );
+            }else{
+                new ItemPower( this.shape.x, this.shape.y, Util.randomInt( Power.Spread, Power.Magnet ) );
+            }
             this.destroy();
 
             let x = this.shape.x;

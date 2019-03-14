@@ -32,7 +32,7 @@ class PlayerShot extends GameObject{
         }
         this.shape.x = x;
         this.shape.y = y;
-        this.shape.graphics.beginFill(0x00c0ff);
+        this.shape.graphics.beginFill(0xffa000);
         this.shape.graphics.drawCircle(0, 0, radius);
         this.shape.graphics.endFill();
     }
