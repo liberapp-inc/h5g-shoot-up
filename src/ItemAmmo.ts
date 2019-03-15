@@ -9,7 +9,7 @@ class ItemAmmo extends GameObject{
     constructor( x:number, y:number ) {
         super();
 
-        this.radius = SHOT_RADIUS_PER_WIDTH * Util.width;
+        this.radius = SHOT_RADIUS_PER_WIDTH * Util.width * 1.75;
         this.setShape(x, y);
     }
 
@@ -23,8 +23,11 @@ class ItemAmmo extends GameObject{
         }
         this.shape.x = x;
         this.shape.y = y;
-        this.shape.graphics.beginFill(0x00c0ff);
-        this.shape.graphics.drawCircle(0, 0, this.radius);
+        this.shape.graphics.beginFill(0xf0d000);
+        const r = this.radius * 0.4;
+        this.shape.graphics.drawCircle(r*-0.0, r*-1.4, r);
+        this.shape.graphics.drawCircle(r*+1.2, r*+0.6, r);
+        this.shape.graphics.drawCircle(r*-1.2, r*+0.6, r);
         this.shape.graphics.endFill();
     }
 
@@ -53,7 +56,7 @@ class ItemAmmo extends GameObject{
             return true;
         }
         // マグネット引き寄せ
-        if( Player.I.power == Power.Magnet ){
+        if( Player.I.power == Power.MAGNET ){
             l = Math.sqrt( l );
             let rate = 1 - Util.clamp( l / (Util.width * 0.5), 0, 1 );
             this.speed += (1.0 - this.speed) * rate;

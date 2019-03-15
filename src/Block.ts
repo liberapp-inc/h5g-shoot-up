@@ -4,11 +4,11 @@
 class Block extends GameObject{
 
     static blocks:Block[] = [];
-    static readonly maxHp:number = 10;
+    static readonly maxHp:number = 15;
     hp:number;
     sizeW:number;
     sizeH:number;
-    readonly animPeriod = 8;
+    readonly animPeriod = 5;
     animFrame:number = 0;
     textHp:egret.TextField = null;
 
@@ -41,12 +41,12 @@ class Block extends GameObject{
         this.shape.x = x;
         this.shape.y = y;
         this.shape.graphics.beginFill(Block.getColor(this.hp));
-        this.shape.graphics.drawRoundRect(-0.5*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH, this.sizeW*0.2);
+        this.shape.graphics.drawRect(-0.5*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH);
         this.shape.graphics.endFill();
     }
     static getColor( hp:number ): number {
         let rate = Util.clamp( (hp-1) / (Block.maxHp-1), 0, 1);
-        return Util.colorLerp( 0x2060ff, 0x00d0ff, rate );
+        return Util.colorLerp( 0x0040ff, 0x0000e0, rate );
     }
 
     update() {
@@ -104,10 +104,10 @@ class Block extends GameObject{
             this.setShape( this.shape.x, this.shape.y );
         }else{
             Score.I.breakBlock();
-            if( ItemPower.I != null || Util.randomInt(0,9)!=0 ){
+            if( ItemPower.I != null || Util.randomInt(0,18)!=0 ){
                 new ItemAmmo( this.shape.x, this.shape.y );
             }else{
-                new ItemPower( this.shape.x, this.shape.y, Util.randomInt( Power.Spread, Power.Magnet ) );
+                new ItemPower( this.shape.x, this.shape.y, Util.randomInt( Power.None+1, Power.Total-1 ) );
             }
             this.destroy();
 

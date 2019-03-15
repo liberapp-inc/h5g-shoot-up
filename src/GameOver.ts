@@ -8,10 +8,10 @@ class GameOver extends GameObject{
     constructor() {
         super();
 
-        this.textGameOver = Util.newTextField("GAME OVER", Util.width / 10, 0xFFFF00, 0.5, 0.45, true);
+        this.textGameOver = Util.newTextField("GAME OVER", Util.width / 10, 0xf0c000, 0.5, 0.45, true);
         GameObject.display.addChild( this.textGameOver );
         
-        this.textScore = Util.newTextField("SCORE : " + Score.I.point.toFixed(), Util.width / 12, 0xFFFF00, 0.5, 0.55, true);
+        this.textScore = Util.newTextField("SCORE : " + Score.I.point.toFixed(), Util.width / 12, 0xf0c000, 0.5, 0.55, true);
         GameObject.display.addChild( this.textScore );
 
         if( Score.I.point >= Score.I.bestScore ){

@@ -11,6 +11,7 @@ class ItemPower extends GameObject{
     readonly speed:number = 0.8;
     text:egret.TextField = null;
     state:()=>void = this.stateFall;
+    step:number = 0;
 
     constructor( x:number, y:number, power:Power ) {
         super();
@@ -20,7 +21,7 @@ class ItemPower extends GameObject{
         this.sizeW = BLOCK_SIZE_PER_WIDTH * Util.width;
         this.sizeH = this.sizeW * 0.5;
         this.setShape(x, y);
-        this.text = Util.newTextField(Power[power], Util.width / 24, 0xffff00, this.shape.x/Util.width, this.shape.y/Util.height, true);
+        this.text = Util.newTextField(Power[power], Util.width / 24, 0xf0d000, this.shape.x/Util.width, this.shape.y/Util.height, true);
         GameObject.display.addChild( this.text );
     }
 
@@ -42,7 +43,7 @@ class ItemPower extends GameObject{
         let h = this.sizeH;
         this.shape.x = x;
         this.shape.y = y;
-        this.shape.graphics.lineStyle(3, 0x00ffff);
+        this.shape.graphics.lineStyle(3, 0xf0d000);
         this.shape.graphics.drawRect( w * -0.5, h * -0.5, w, h );
     }
 
@@ -62,6 +63,7 @@ class ItemPower extends GameObject{
         if( dx**2 + dy**2 <= (Player.I.radius + this.sizeW)**2 ){
             Player.I.pickPower( this.power );
             this.state = this.stateEquipped;
+            this.step = 60 * 6;
             return;
         }
 
@@ -71,14 +73,20 @@ class ItemPower extends GameObject{
     }
 
     stateEquipped(){
-        this.shape.x += (Player.I.shape.x - this.shape.x) * 0.25;
-        this.shape.y += ((Player.I.shape.y + Player.I.radius + this.sizeH * 0.5) - this.shape.y) * 0.25;
+        this.shape.x += (Player.I.shape.x - this.shape.x) * 0.5;
+        this.shape.y += ((Player.I.shape.y + Player.I.radius + this.sizeH * 0.5) - this.shape.y) * 0.5;
 
         this.text.x = this.shape.x - this.text.width  * 0.5;
         this.text.y = this.shape.y - this.text.height * 0.5;
 
-        if( Player.I.power != this.power ){
-            this.destroy();
+        this.step--;
+
+        if( this.step <= 60 * 2 ){
+            this.text.alpha = (this.step & 0x8) != 0 ? 1 : 0.5;
+
+            if( this.step <= 0 ){
+                this.destroy();
+            }
         }
     }
 }

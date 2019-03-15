@@ -9,18 +9,18 @@
 	],
 	"game": [
 		"bin-debug/GameObject.js",
-		"bin-debug/ItemAmmo.js",
+		"bin-debug/ItemPower.js",
 		"bin-debug/EffectCircle.js",
-		"bin-debug/EffectLine.js",
 		"bin-debug/Game.js",
 		"bin-debug/Background.js",
 		"bin-debug/GameOver.js",
+		"bin-debug/ItemAmmo.js",
 		"bin-debug/Block.js",
-		"bin-debug/ItemPower.js",
 		"bin-debug/Main.js",
 		"bin-debug/Player.js",
 		"bin-debug/PlayerShot.js",
 		"bin-debug/Score.js",
+		"bin-debug/StartMessage.js",
 		"bin-debug/Util.js",
 		"bin-debug/Wave.js"
 	]

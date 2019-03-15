@@ -3,10 +3,10 @@
 
 enum Power{
     None,
-    Spread,
-    Magnet,
-    Rush,
-    Slow,
+    SPREAD,
+    MAGNET,
+    FEVER,
+    Total
 }
 
 class Player extends GameObject{
@@ -14,12 +14,10 @@ class Player extends GameObject{
     static I:Player = null;   // singleton instance
 
     radius:number;
-    maxSpeed:number;
-    speed:number;
-
+    maxSpeed:number = 0;
+    speed:number = 0;
     ammo:number = 0;
     textAmmo:egret.TextField = null;
-
     readonly shotLevelTable:number[] = [10, 30, 100];
     shotLevel = 0;
     readonly shotFrameTable:number[] = [15, 10, 5];
@@ -29,17 +27,16 @@ class Player extends GameObject{
     touch:boolean = false;
     touchOffsetX:number = 0;
     stopFlag:boolean = false;
-    state:()=>void = this.stateRun;
+    state:()=>void = this.stateNone;
     
     constructor() {
         super();
 
         Player.I = this;
         this.radius = PLAYER_RADIUS_PER_WIDTH * Util.width;
-        this.speed = this.maxSpeed = Util.height / (2.5 * 60);
 
         this.setShape(Util.width *0.5, Util.height * PLAYER_POSITION_PER_HEIGHT, this.radius);
-        this.textAmmo = Util.newTextField(""+this.ammo, Util.width / 18, 0x502000, this.shape.x/Util.width, this.shape.y/Util.height, true);
+        this.textAmmo = Util.newTextField(""+this.ammo, Util.width / 18, 0x000000, this.shape.x/Util.width, this.shape.y/Util.height, true);
         GameObject.display.addChild( this.textAmmo );
 
         GameObject.display.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, (e: egret.TouchEvent) => this.touchBegin(e), this);
@@ -66,7 +63,7 @@ class Player extends GameObject{
         }
         this.shape.x = x;
         this.shape.y = y;
-        this.shape.graphics.beginFill(0xffc000);
+        this.shape.graphics.beginFill(0xf0c000);
         this.shape.graphics.drawCircle(0, 0, radius);
         this.shape.graphics.endFill();
     }
@@ -75,6 +72,10 @@ class Player extends GameObject{
         this.state();
     }
 
+    startRun(){
+        this.state = this.stateRun;
+        this.speed = this.maxSpeed = Util.height / (2.5 * 60);
+    }
     stateRun(){
         // game over
         if( this.shape.y > Util.height - this.radius ){
@@ -85,31 +86,14 @@ class Player extends GameObject{
         }
 
         // power
-        if( this.power != Power.None ){
-            switch( this.power ){
-                default:
-                break;
-
-                case Power.Rush:
-                this.stopFlag = false;
-                this.shape.y += (PLAYER_POSITION_PER_HEIGHT*Util.height - this.shape.y) * 0.5;
-                break;
-
-                case Power.Slow:
-                break;
-            }
-
-            if( (--this.powerFrame) <= 0 ){
-                this.power = Power.None;
-            }
-        }
+        this.processPower();
 
         // move
         if( this.stopFlag ){
             this.stopFlag = false;
             this.speed = this.maxSpeed * 0.5;
         }
-        this.speed += Util.clamp( this.maxSpeed - this.speed, 0, this.maxSpeed*0.1 );
+        this.speed += Util.clamp( this.maxSpeed - this.speed, this.maxSpeed * -0.1, this.maxSpeed * +0.1 );
         const yd = Util.height * (1/60/2);
         this.shape.y += Util.clamp( PLAYER_POSITION_PER_HEIGHT*Util.height - this.shape.y, -yd, yd );
 
@@ -125,7 +109,7 @@ class Player extends GameObject{
                     new PlayerShot( this.shape.x, this.shape.y - this.radius, 0 );
                     break;
 
-                    case Power.Spread:
+                    case Power.SPREAD:
                     new PlayerShot( this.shape.x, this.shape.y - this.radius, 0 );
                     new PlayerShot( this.shape.x, this.shape.y - this.radius, Math.PI * (+1/16) );
                     new PlayerShot( this.shape.x, this.shape.y - this.radius, Math.PI * (-1/16) );
@@ -141,6 +125,7 @@ class Player extends GameObject{
     }
 
     stateNone(){}
+
 
     touchBegin(e:egret.TouchEvent){
         if( this.state == this.stateNone )
@@ -184,8 +169,52 @@ class Player extends GameObject{
         }
     }
 
+    // Power
+
     pickPower( power:Power ){
         this.power = power;
-        this.powerFrame = 60 * 6;
+    }
+
+    processPower(){
+        if( this.power == Power.None )
+            return;
+        
+        if( ItemPower.I == null ){
+            this.endPower();
+            return;
+        }
+
+        switch( this.power ){
+            default:
+            break;
+
+            case Power.FEVER:
+            // 突進
+            this.stopFlag = false;
+            this.shape.y += (PLAYER_POSITION_PER_HEIGHT*Util.height - this.shape.y) * 0.5;
+            this.shape.scaleX =
+            this.shape.scaleY = 2.0 + (ItemPower.I.step & 7) / 7;
+            this.radius = PLAYER_RADIUS_PER_WIDTH * Util.width * 2.0;
+            this.maxSpeed = Util.height / (1 * 60);
+            // Blockへのダメージ
+            Block.blocks.forEach( block => {
+                if( (block.shape.y - this.shape.y)**2 < (block.sizeH*0.5 + this.radius)**2 )
+                if( (block.shape.x - this.shape.x)**2 < (block.sizeW*0.5 + this.radius)**2 ){
+                    block.applyDamage(Block.maxHp);
+                }
+            });
+            break;
+        }
+    }
+    
+    endPower(){
+        this.power = Power.None;
+        
+        // dispose fever
+        this.speed = this.maxSpeed = Util.height / (2.5 * 60);
+        this.shape.scaleX =
+        this.shape.scaleY = 1.0;
+        this.radius = PLAYER_RADIUS_PER_WIDTH * Util.width;
+        this.speed = this.maxSpeed = Util.height / (2.5 * 60);
     }
 }

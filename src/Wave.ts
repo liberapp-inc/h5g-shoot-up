@@ -4,6 +4,7 @@ class Wave extends GameObject{
 
     scroll:number = 0;
     wave:number = 0;
+    meteo:number = 60*6;
     state:()=>void = this.stateLine;
     step:number = 0;
     route:number=0;
@@ -17,11 +18,24 @@ class Wave extends GameObject{
     update() {
         this.scroll += Player.I.speed;
         this.state();
+
+        this.processMeteo();
     }
 
     calcBlockHp():number {
-        const maxHp = Math.min( this.wave/16+1, Block.maxHp );
+        const maxHp = Math.min( this.wave/16+3, Block.maxHp );
         return Util.clamp( Util.randomInt( maxHp*0.25, maxHp ), 1, maxHp );
+    }
+
+    processMeteo(){
+        if( (--this.meteo) <= 0 ){
+            this.meteo = Util.random( 0.5, Util.clamp( 15 - this.wave/10, 8, 15 ) ) * 60;
+            const bw   = BLOCK_SIZE_PER_WIDTH  * Util.width;
+            const bh05 = BLOCK_SIZE_PER_HEIGHT * Util.height * 0.5;
+            let i = Util.randomInt( 1, BLOCK_IN_WIDTH - 1 );
+            const maxHp = Math.min( this.wave/16+6, Block.maxHp );
+            new FallBlock( bw*0.5 + i * bw, -bh05, maxHp, Util.randomInt(0,3) != 0 ? 2.0 : 0.7 );
+        }
     }
 
     stateLine(){
@@ -43,11 +57,7 @@ class Wave extends GameObject{
             }else{
                 // one block
                 let i = Util.randomInt( 1, BLOCK_IN_WIDTH - 1 );
-                if( Util.randomInt( 0, 12 ) != 0 ){
-                    new Block( bw*0.5 + i * bw, -bh05, this.calcBlockHp() );
-                }else{
-                    new FallBlock( bw*0.5 + i * bw, -bh05, this.calcBlockHp(), 2 );
-                }
+                new Block( bw*0.5 + i * bw, -bh05, this.calcBlockHp() );
             }
 
             if( Util.randomInt( 0, 30 ) == 0 ){

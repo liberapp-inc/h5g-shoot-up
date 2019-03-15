@@ -32,7 +32,7 @@ class PlayerShot extends GameObject{
         }
         this.shape.x = x;
         this.shape.y = y;
-        this.shape.graphics.beginFill(0xffa000);
+        this.shape.graphics.beginFill(0xf0c000);
         this.shape.graphics.drawCircle(0, 0, radius);
         this.shape.graphics.endFill();
     }
@@ -43,11 +43,9 @@ class PlayerShot extends GameObject{
         this.shape.y += this.vy;
 
         // Blockとの接触判定
-        const hh = (BLOCK_SIZE_PER_HEIGHT*Util.height*0.5 + this.radius)**2;
-        const ww = (BLOCK_SIZE_PER_WIDTH *Util.width *0.5 + this.radius)**2;
         Block.blocks.forEach( block => {
-            if( (block.shape.y - this.shape.y)**2 < hh )
-            if( (block.shape.x - this.shape.x)**2 < ww ){
+            if( (block.shape.y - this.shape.y)**2 <= (block.sizeH*0.5 + this.radius)**2 )
+            if( (block.shape.x - this.shape.x)**2 <= (block.sizeW*0.5 + this.radius)**2 ){
                 block.applyDamage(1);
                 this.destroy();
             }

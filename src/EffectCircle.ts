@@ -9,7 +9,7 @@ class EffectCircle extends GameObject{
     frame:number;
     scaler:number;
 
-    constructor( x:number, y:number, radius:number, color:number=0xffc000, frames:number=30, scaler:number=1.03 ) {
+    constructor( x:number, y:number, radius:number, color:number=0xffc000, frames:number=10, scaler:number=1.1 ) {
         super();
 
         this.radius = radius;
