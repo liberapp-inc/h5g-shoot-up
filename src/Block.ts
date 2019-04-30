@@ -4,7 +4,7 @@
 class Block extends GameObject{
 
     static blocks:Block[] = [];
-    static readonly maxHp:number = 15;
+    static readonly maxHp:number = 12;
     hp:number;
     sizeW:number;
     sizeH:number;
@@ -34,14 +34,14 @@ class Block extends GameObject{
         if( this.shape == null ){
             this.shape = new egret.Shape();
             GameObject.display.addChild(this.shape);
-            GameObject.display.setChildIndex(this.shape, 2);
+            GameObject.display.setChildIndex(this.shape, 1);
         }else{
             this.shape.graphics.clear();
         }
         this.shape.x = x;
         this.shape.y = y;
         this.shape.graphics.beginFill(Block.getColor(this.hp));
-        this.shape.graphics.drawRect(-0.5*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH);
+        this.shape.graphics.drawRoundRect(-0.5*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH, this.sizeW*0.2);
         this.shape.graphics.endFill();
     }
     static getColor( hp:number ): number {

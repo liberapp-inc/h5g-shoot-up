@@ -63,7 +63,7 @@ class ItemPower extends GameObject{
         if( dx**2 + dy**2 <= (Player.I.radius + this.sizeW)**2 ){
             Player.I.pickPower( this.power );
             this.state = this.stateEquipped;
-            this.step = 60 * 6;
+            this.step = 60 * 8;
             return;
         }
 

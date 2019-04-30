@@ -15,7 +15,7 @@ const SAVE_KEY_BESTSCORE = "ShootUp-bestScore";
 class Game {
 
     static loadSceneGamePlay() {
-        new Background();
+        //new Background();
         new StartMessage();
         new Score();
         new Player();

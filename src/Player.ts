@@ -20,7 +20,7 @@ class Player extends GameObject{
     textAmmo:egret.TextField = null;
     readonly shotLevelTable:number[] = [10, 30, 100];
     shotLevel = 0;
-    readonly shotFrameTable:number[] = [15, 10, 5];
+    readonly shotFrameTable:number[] = [14, 11, 8];
     shotFrame:number = 0;
     power:Power = Power.None;
     powerFrame:number = 0;
@@ -70,6 +70,11 @@ class Player extends GameObject{
     
     update() {
         this.state();
+        
+        // ammo
+        this.textAmmo.text = "" + this.ammo;
+        this.textAmmo.x = this.shape.x - this.textAmmo.width  * 0.5;
+        this.textAmmo.y = this.shape.y - this.textAmmo.height * 0.5;
     }
 
     startRun(){
@@ -117,11 +122,6 @@ class Player extends GameObject{
                 }
             }
         }
-
-        // ammo
-        this.textAmmo.text = "" + this.ammo;
-        this.textAmmo.x = this.shape.x - this.textAmmo.width  * 0.5;
-        this.textAmmo.y = this.shape.y - this.textAmmo.height * 0.5;
     }
 
     stateNone(){}
@@ -159,7 +159,7 @@ class Player extends GameObject{
         }
     }
 
-    addAmmo( delta:number=5 ){
+    addAmmo( delta:number=8 ){
         this.ammo = Util.clamp( this.ammo + delta, 0, 999 );
 
         for( let i=0 ; i<this.shotLevelTable.length ; i++ ){
